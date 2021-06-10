@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+      ul {
+        list-style-type: none;
+        margin: 5px;
+        padding: 0px;
+      }
+      li {
+
+      }
+  </style>
+</head>
+  <body>
+    <div id="app" style="display: none;">
+      <div id="list"></div>
+      <button id="addTask">Add task</button>
+  </div>
+    <li id="listTemplate" style="display: none;">
+        <input type="checkbox"/>
+        <input name="title" readonly="true"/>
+        <input type="button" value="Save"/>
+        <input type="button" value="Delete"/>
+    </li>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+        
+        document.querySelector("#addTask").addEventListener("click", () => {
+          var token = "PCzQDEkqQsEncFOEeCk-Htvfn4MwTJWK";
+          var li = document.querySelector("#listTemplate").cloneNode(true)
+          li.style.display = "block";
+          li.querySelector("[name=title]").value = prompt(); // Add Task
+          li.querySelector("[value=Save]").addEventListener("click", () => { // Save Task
+            var xhr = new XMLHttpRequest();
+            var url = "http://demo2.z-bit.ee/tasks";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("Authorization", "Bearer " + token);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json.title + ", " + json.desc);
+                }
+            };
+            var data = JSON.stringify({"title": "Task Miski", "desc": "Testing"});
+            xhr.send(data);
+            // Headerisse on vaja Bearer token - OLEMAS
+          })
+          li.querySelector("[value=Delete]").addEventListener("click", () => { // Delete Task
+            li.remove();
+          })
+          document.querySelector("#list").append(li);
+
+          $(document).ready(function() 
+          {
+            console.log("Doc is ready");
+
+            fetch("http://demo2.z-bit.ee/todo.json")
+              .then(response => response.json())
+              .then(data => {
+                console.log(data)
+                
+                createNewTask(data[0].title, data[0], markedAsDone)
+              });
+          });
+          // <ul id="list">
+          // </ul>
+          // <button id="addTask">Add Task</button>
+
+          // document.body.children[0] Otsib asju ühe asja seest, mitte terve veebilehe
+          // find = document.querySelector; jQuery style
+          // var $$ = document.querySelectorAll; jQuery style 2
+          /* fetch("http://demo2.z-bit.ee/tasks")
+              .then(response => response.json())
+              .then(data => {
+                console.log(data)
+                let html = ""
+                for (let i = 0; i < data.length; i++) {
+                  html += "<li>"+data[i].title+"</li>"
+                }
+                document.querySelector("#list").innerHTML = ""
+              })
+          */
+          /* Mu enda kood allpool
+              let json = JSON.stringify( {
+              username: "kevin.klemm@tptlive.ee", password: "NeppyNep69420"
+            }) 
+          var item = prompt("Lisa midagi mida teha")
+          var fullList = document.getElementById("list");
+          var listItem = document.createElement("li");
+
+          if (item)
+          {
+            listItem.appendChild(document.createTextNode(item));
+            fullList.appendChild(listItem);
+          }
+          else
+          {
+            alert("Kirjuta midagi, debiil");
+          }
+
+          /*if (item != null) Testing kas muutub
+          {
+            document.getElementById("addTask").innerHTML = "This is " + item;
+          }*/
+        })
+
+        /* document.querySelector("button").addEventListener("click", myFunction)
+        function myFunction()
+        {
+          prompt()
+        } */
+    </script>
+  </body>
+</html>
